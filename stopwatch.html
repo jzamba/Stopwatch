@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Stopwatch</title>
+  <style>
+    body {
+      background-color: #f2f2f2;
+      font-family: Arial, sans-serif;
+    }
+
+    .container {
+      text-align: center;
+      margin-top: 100px;
+    }
+    
+    .time {
+      font-size: 60px;
+      margin-bottom: 20px;
+      color: #333;
+    }
+    
+    .btn {
+      margin: 10px;
+      padding: 10px 20px;
+      font-size: 18px;
+      background-color: #4caf50;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .btn:hover {
+      background-color: #45a049;
+    }
+
+    table {
+      margin-top: 50px;
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    table th {
+      background-color: #333;
+      color: white;
+      padding: 10px;
+    }
+
+    table td {
+      padding: 10px;
+      text-align: center;
+      font-size: 18px;
+    }
+
+    table tr:nth-child(odd) {
+      background-color: #f9f9f9;
+    }
+
+    table tr:hover {
+      background-color: #e9e9e9;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="time" id="timer">00:00:00</div>
+    <button class="btn" id="startBtn">Start</button>
+    <button class="btn" id="stopBtn">Stop</button>
+    <button class="btn" id="resetBtn">Reset</button>
+  </div>
+
+  <table id="data-table">
+    <tr>
+      <th>Start time</th>
+      <th>End time</th>
+      <th>Difference</th>
+      <th>Project name</th>
+    </tr>
+  </table>
+
+  <script>
+    var startTime, endTime;
+    var timerInterval;
+
+    function startTimer() {
+      startTime = new Date();
+      timerInterval = setInterval(updateTimer, 10);
+    }
+
+    function stopTimer() {
+      clearInterval(timerInterval);
+    }
+
+    function resetTimer() {
+      clearInterval(timerInterval);
+      startTime = null;
+      endTime = null;
+      document.getElementById("timer").innerText = "00:00:00";
+    }
+
+    function updateTimer() {
+      var currentTime = new Date();
+      var elapsedTime = currentTime - startTime;
+      var formattedTime = formatTime(elapsedTime);
+      document.getElementById("timer").innerHTML = formattedTime;
+    }
+
+    function formatTime(time) {
+      var hours = Math.floor(time / 3600000);
+      var minutes = Math.floor((time % 3600000) / 60000);
+      var seconds = Math.floor((time % 60000) / 1000);
+
+      hours = padNumber(hours);
+      minutes = padNumber(minutes);
+      seconds = padNumber(seconds);
+
+      return hours + ":" + minutes + ":" + seconds;
+    }
+
+    function padNumber(number) {
+      return number.toString().padStart(2, '0');
+    }
+
+    document.getElementById("startBtn").addEventListener("click", function() {
+      startTimer();
+    });
+
+    document.getElementById("stopBtn").addEventListener("click", function() {
+      stopTimer();
+    });
+
+    document.getElementById("resetBtn").addEventListener("click", function() {
+      stopTimer();
+      endTime = new Date();
+      
+      var projectName = prompt("Enter project name:");
+      if (projectName !== null && projectName.trim() !== "") {
+        var table = document.getElementById("data-table");
+        var newRow = table.insertRow(-1);
+
+        var startTimeCell = newRow.insertCell(0);
+        var endTimeCell = newRow.insertCell(1);
+        var differenceCell = newRow.insertCell(2);
+        var projectNameCell = newRow.insertCell(3);
+
+        startTimeCell.textContent = getFormattedTime(startTime);
+        endTimeCell.textContent = getFormattedTime(endTime);
+        differenceCell.textContent = calculateDifference(startTime, endTime);
+        projectNameCell.textContent = projectName.trim();
+      }
+
+      resetTimer();
+    });
+
+    function getFormattedTime(time) {
+      var hours = padNumber(time.getHours());
+      var minutes = padNumber(time.getMinutes());
+      var seconds = padNumber(time.getSeconds());
+      return hours + ":" + minutes + ":" + seconds;
+    }
+
+    function calculateDifference(startTime, endTime) {
+      var difference = Math.abs(endTime - startTime);
+      var hours = Math.floor(difference / 3600000);
+      var minutes = Math.floor((difference % 3600000) / 60000);
+      var seconds = Math.floor((difference % 60000) / 1000);
+
+      hours = padNumber(hours);
+      minutes = padNumber(minutes);
+      seconds = padNumber(seconds);
+
+      return hours + ":" + minutes + ":" + seconds;
+    }
+  </script>
+</body>
+</html>
